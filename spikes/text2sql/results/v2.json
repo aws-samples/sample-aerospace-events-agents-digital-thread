@@ -1,0 +1,388 @@
+[
+  {
+    "id": "q01",
+    "nl": "How many critical NCRs per supplier in the last 30 days?",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.supplierName') AS supplier_name,\n    COUNT(*) AS critical_ncr_count\nFROM aerospace_events.domain_events\nWHERE event_type = 'NON_CONFORMANCE_RAISED'\n  AND JSON_EXTRACT_SCALAR(payload, '$.severity') = 'CRITICAL'\n  AND occurred_at >= CAST(current_date - INTERVAL '30' DAY AS VARCHAR)\nGROUP BY JSON_EXTRACT_SCALAR(payload, '$.supplierName')\nORDER BY critical_ncr_count DESC",
+    "valid": true,
+    "rowcount": 1,
+    "latency_s": 2.15,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "supplier_name",
+        "critical_ncr_count"
+      ],
+      [
+        "Titan Forge",
+        "1"
+      ]
+    ]
+  },
+  {
+    "id": "q02",
+    "nl": "Show the daily earned value trend (CPI and SPI) for the ARES-1 program.",
+    "sql": "SELECT\n    SUBSTR(occurred_at, 1, 10)                                        AS event_date,\n    JSON_EXTRACT_SCALAR(payload, '$.period')                          AS ev_period,\n    CAST(JSON_EXTRACT_SCALAR(payload, '$.cpi') AS DOUBLE)             AS cpi,\n    CAST(JSON_EXTRACT_SCALAR(payload, '$.spi') AS DOUBLE)             AS spi,\n    JSON_EXTRACT_SCALAR(payload, '$.programId')                       AS program_id\nFROM aerospace_events.domain_events\nWHERE event_type = 'EV_UPDATED'\n  AND domain     = 'PROGRAM'\n  AND JSON_EXTRACT_SCALAR(payload, '$.programId') = 'ARES-1'\nORDER BY event_date ASC",
+    "valid": true,
+    "rowcount": 10,
+    "latency_s": 1.97,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "event_date",
+        "ev_period",
+        "cpi",
+        "spi",
+        "program_id"
+      ],
+      [
+        "2026-04-27",
+        "2026-04",
+        "1.02",
+        "1.01",
+        "ARES-1"
+      ],
+      [
+        "2026-05-04",
+        "2026-05",
+        "1.01",
+        "0.88",
+        "ARES-1"
+      ],
+      [
+        "2026-05-11",
+        "2026-05",
+        "0.95",
+        "1.0",
+        "ARES-1"
+      ],
+      [
+        "2026-05-18",
+        "2026-05",
+        "0.99",
+        "1.0",
+        "ARES-1"
+      ],
+      [
+        "2026-05-25",
+        "2026-05",
+        "0.95",
+        "0.9",
+        "ARES-1"
+      ]
+    ]
+  },
+  {
+    "id": "q03",
+    "nl": "Which parts have the most non-conformance defects? Give me the top 5.",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.partNumber') AS part_number,\n    COUNT(*) AS defect_count\nFROM aerospace_events.domain_events\nWHERE event_type = 'NON_CONFORMANCE_RAISED'\n  AND JSON_EXTRACT_SCALAR(payload, '$.partNumber') IS NOT NULL\nGROUP BY JSON_EXTRACT_SCALAR(payload, '$.partNumber')\nORDER BY defect_count DESC\nLIMIT 5",
+    "valid": true,
+    "rowcount": 5,
+    "latency_s": 1.88,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "part_number",
+        "defect_count"
+      ],
+      [
+        "55192-001",
+        "22"
+      ],
+      [
+        "44821-012",
+        "21"
+      ],
+      [
+        "55192-004",
+        "17"
+      ],
+      [
+        "44821-007",
+        "17"
+      ],
+      [
+        "44821-003",
+        "14"
+      ]
+    ]
+  },
+  {
+    "id": "q04",
+    "nl": "Show fleet digital-twin anomalies this month.",
+    "sql": "SELECT\n    event_id,\n    occurred_at,\n    entity_id,\n    JSON_EXTRACT_SCALAR(payload, '$.serialNumber')  AS serial_number,\n    JSON_EXTRACT_SCALAR(payload, '$.parameter')     AS parameter,\n    JSON_EXTRACT_SCALAR(payload, '$.actualValue')   AS actual_value,\n    JSON_EXTRACT_SCALAR(payload, '$.expectedValue') AS expected_value,\n    JSON_EXTRACT_SCALAR(payload, '$.deviation')     AS deviation,\n    JSON_EXTRACT_SCALAR(payload, '$.unit')          AS unit,\n    JSON_EXTRACT_SCALAR(payload, '$.status')        AS status\nFROM\n    aerospace_events.domain_events\nWHERE\n    event_type = 'DT_ANOMALY'\n    AND domain  = 'INSERVICE'\n    AND occurred_at >= CAST(date_trunc('month', current_date) AS VARCHAR)\nORDER BY\n    occurred_at DESC",
+    "valid": true,
+    "rowcount": 2,
+    "latency_s": 1.88,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "event_id",
+        "occurred_at",
+        "entity_id",
+        "serial_number",
+        "parameter",
+        "actual_value",
+        "expected_value",
+        "deviation",
+        "unit",
+        "status"
+      ],
+      [
+        "08fe057d-6ba1-46e0-a0bb-2abe6d3a7683",
+        "2026-07-20T07:03:36.000Z",
+        "SN-0044",
+        "SN-0044",
+        "engine_vibration_ips",
+        "0.54",
+        "0.45",
+        "25.7",
+        "ips",
+        "ANOMALY"
+      ],
+      [
+        "17611681-155f-4723-b2c6-b95d1e3634f5",
+        "2026-07-07T07:03:36.000Z",
+        "SN-0044",
+        "SN-0044",
+        "cabin_pressure_diff_psi",
+        "10.35",
+        "8.5",
+        "370",
+        "psi",
+        "ANOMALY"
+      ]
+    ]
+  },
+  {
+    "id": "q05",
+    "nl": "Count events by domain.",
+    "sql": "SELECT\n    domain,\n    COUNT(*) AS event_count\nFROM aerospace_events.domain_events\nGROUP BY domain\nORDER BY event_count DESC",
+    "valid": true,
+    "rowcount": 9,
+    "latency_s": 1.95,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "domain",
+        "event_count"
+      ],
+      [
+        "MES",
+        "469"
+      ],
+      [
+        "ERP",
+        "148"
+      ],
+      [
+        "INSERVICE",
+        "119"
+      ],
+      [
+        "QMS",
+        "91"
+      ],
+      [
+        "DHR",
+        "53"
+      ]
+    ]
+  },
+  {
+    "id": "q06",
+    "nl": "What is the average supplier overall score by supplier, most recent period?",
+    "sql": "WITH ranked AS (\n    SELECT\n        JSON_EXTRACT_SCALAR(payload, '$.supplierId')   AS supplier_id,\n        JSON_EXTRACT_SCALAR(payload, '$.supplierName') AS supplier_name,\n        JSON_EXTRACT_SCALAR(payload, '$.period')       AS period,\n        CAST(JSON_EXTRACT_SCALAR(payload, '$.overallScore') AS DOUBLE) AS overall_score,\n        ROW_NUMBER() OVER (\n            PARTITION BY JSON_EXTRACT_SCALAR(payload, '$.supplierId')\n            ORDER BY JSON_EXTRACT_SCALAR(payload, '$.period') DESC\n        ) AS rn\n    FROM aerospace_events.domain_events\n    WHERE event_type = 'SUPPLIER_SCORE_UPDATED'\n)\nSELECT\n    supplier_id,\n    supplier_name,\n    period                        AS most_recent_period,\n    AVG(overall_score)            AS avg_overall_score\nFROM ranked\nWHERE rn = 1\nGROUP BY\n    supplier_id,\n    supplier_name,\n    period\nORDER BY avg_overall_score DESC",
+    "valid": true,
+    "rowcount": 3,
+    "latency_s": 1.92,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "supplier_id",
+        "supplier_name",
+        "most_recent_period",
+        "avg_overall_score"
+      ],
+      [
+        "titan-forge",
+        "Titan Forge",
+        "2026-07",
+        "93.0"
+      ],
+      [
+        "apex-aero",
+        "Apex Aerostructures",
+        "2026-07",
+        "75.4"
+      ],
+      [
+        "nordic-precision",
+        "Nordic Precision",
+        "2026-07",
+        "71.8"
+      ]
+    ]
+  },
+  {
+    "id": "q07",
+    "nl": "Total matched invoice amount per supplier, sorted highest first.",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.supplierName') AS supplier_name,\n    JSON_EXTRACT_SCALAR(payload, '$.supplierId')   AS supplier_id,\n    SUM(CAST(JSON_EXTRACT_SCALAR(payload, '$.invoiceAmount') AS DOUBLE)) AS total_matched_amount\nFROM aerospace_events.domain_events\nWHERE event_type = 'INVOICE_MATCHED'\nGROUP BY\n    JSON_EXTRACT_SCALAR(payload, '$.supplierName'),\n    JSON_EXTRACT_SCALAR(payload, '$.supplierId')\nORDER BY total_matched_amount DESC",
+    "valid": true,
+    "rowcount": 3,
+    "latency_s": 1.94,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "supplier_name",
+        "supplier_id",
+        "total_matched_amount"
+      ],
+      [
+        "Titan Forge",
+        "titan-forge",
+        "238328.2"
+      ],
+      [
+        "Nordic Precision",
+        "nordic-precision",
+        "149608.59"
+      ],
+      [
+        "Apex Aerostructures",
+        "apex-aero",
+        "67261.53000000001"
+      ]
+    ]
+  },
+  {
+    "id": "q08",
+    "nl": "How many work orders were started per production cell?",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.productionCell') AS production_cell,\n    COUNT(*) AS work_orders_started\nFROM aerospace_events.domain_events\nWHERE event_type = 'WORK_ORDER_STARTED'\nGROUP BY JSON_EXTRACT_SCALAR(payload, '$.productionCell')\nORDER BY work_orders_started DESC",
+    "valid": true,
+    "rowcount": 1,
+    "latency_s": 1.87,
+    "error": null,
+    "hallucinated_fields": [
+      "productionCell"
+    ],
+    "suspicious_empty": false,
+    "null_group_key": true,
+    "correct": false,
+    "sample": [
+      [
+        "production_cell",
+        "work_orders_started"
+      ],
+      [
+        null,
+        "150"
+      ]
+    ]
+  },
+  {
+    "id": "q09",
+    "nl": "List the most common defect codes for critical or major non-conformances.",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.defectCode') AS defect_code,\n    JSON_EXTRACT_SCALAR(payload, '$.severity')   AS severity,\n    COUNT(*)                                      AS occurrence_count\nFROM aerospace_events.domain_events\nWHERE event_type = 'NON_CONFORMANCE_RAISED'\n  AND UPPER(JSON_EXTRACT_SCALAR(payload, '$.severity')) IN ('CRITICAL', 'MAJOR')\nGROUP BY\n    JSON_EXTRACT_SCALAR(payload, '$.defectCode'),\n    JSON_EXTRACT_SCALAR(payload, '$.severity')\nORDER BY occurrence_count DESC\nLIMIT 20",
+    "valid": true,
+    "rowcount": 10,
+    "latency_s": 2.79,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "defect_code",
+        "severity",
+        "occurrence_count"
+      ],
+      [
+        "MATERIAL_INCLUSION",
+        "MAJOR",
+        "6"
+      ],
+      [
+        "CRACK_DETECTED",
+        "MAJOR",
+        "5"
+      ],
+      [
+        "POSITION_OOT",
+        "MAJOR",
+        "5"
+      ],
+      [
+        "BORE_DIAMETER_OOT",
+        "MAJOR",
+        "4"
+      ],
+      [
+        "SURFACE_FINISH_OOT",
+        "CRITICAL",
+        "3"
+      ]
+    ]
+  },
+  {
+    "id": "q10",
+    "nl": "What was the largest hydraulic pressure deviation recorded in a digital-twin anomaly, and on which serial number?",
+    "sql": "SELECT\n    JSON_EXTRACT_SCALAR(payload, '$.serialNumber')                          AS serial_number,\n    JSON_EXTRACT_SCALAR(payload, '$.parameter')                             AS parameter,\n    CAST(JSON_EXTRACT_SCALAR(payload, '$.actualValue')   AS DOUBLE)         AS actual_value,\n    CAST(JSON_EXTRACT_SCALAR(payload, '$.expectedValue') AS DOUBLE)         AS expected_value,\n    CAST(JSON_EXTRACT_SCALAR(payload, '$.deviation')     AS DOUBLE)         AS deviation,\n    JSON_EXTRACT_SCALAR(payload, '$.unit')                                  AS unit,\n    occurred_at\nFROM aerospace_events.domain_events\nWHERE event_type = 'DT_ANOMALY'\n  AND LOWER(JSON_EXTRACT_SCALAR(payload, '$.parameter')) LIKE '%hydraulic%pressure%'\nORDER BY CAST(JSON_EXTRACT_SCALAR(payload, '$.deviation') AS DOUBLE) DESC\nLIMIT 1",
+    "valid": true,
+    "rowcount": 1,
+    "latency_s": 2.82,
+    "error": null,
+    "hallucinated_fields": [],
+    "suspicious_empty": false,
+    "null_group_key": false,
+    "correct": true,
+    "sample": [
+      [
+        "serial_number",
+        "parameter",
+        "actual_value",
+        "expected_value",
+        "deviation",
+        "unit",
+        "occurred_at"
+      ],
+      [
+        "SN-0044",
+        "hydraulic_pressure_psi",
+        "3880.89",
+        "3000.0",
+        "440.4",
+        "psi",
+        "2026-05-02T07:03:36.000Z"
+      ]
+    ]
+  }
+]

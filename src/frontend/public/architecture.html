@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aerospace Digital Thread — Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f5f3ef; --card: #ffffff; --border: #e2e0dc; --text: #1a1a1a; --muted: #8a8680;
+    --aws: #0891b2; --accent: #4f46e5; --green: #059669; --orange: #c2410c; --navy: #1e3a5f;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 32px; min-height: 100vh; }
+  h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
+  h1 span { color: var(--muted); font-weight: 300; }
+  .subtitle { font-size: 12px; color: var(--muted); margin-bottom: 24px; font-weight: 300; }
+  .diagram { max-width: 1200px; margin: 0 auto; }
+
+  .layer { position: relative; border: 1.5px solid var(--border); border-radius: 12px; padding: 24px 16px 16px; background: rgba(255,255,255,0.4); }
+  .layer-label { position: absolute; top: -10px; left: 14px; padding: 2px 10px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; background: var(--bg); border-radius: 4px; }
+
+  .node { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; box-shadow: var(--shadow); font-size: 12px; font-weight: 500; transition: transform 0.15s, box-shadow 0.15s; }
+  .node:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .node .sub { font-size: 9px; color: var(--muted); font-weight: 300; display: block; margin-top: 1px; }
+  .node.small { padding: 5px 9px; font-size: 10px; }
+  .node.tiny { padding: 3px 7px; font-size: 9px; }
+
+  .row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .col { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+
+  .c-aws { color: var(--aws); } .c-green { color: var(--green); } .c-accent { color: var(--accent); } .c-orange { color: var(--orange); } .c-navy { color: var(--navy); }
+  .b-aws { border-color: rgba(8,145,178,0.25); background: rgba(8,145,178,0.03); }
+  .b-green { border-color: rgba(5,150,105,0.25); background: rgba(5,150,105,0.03); }
+  .b-accent { border-color: rgba(79,70,229,0.25); background: rgba(79,70,229,0.03); }
+  .b-orange { border-color: rgba(194,65,12,0.25); background: rgba(194,65,12,0.03); }
+  .b-navy { border-color: rgba(30,58,95,0.25); background: rgba(30,58,95,0.03); }
+
+  /* Main grid: agents sidebar + layers + outcomes sidebar */
+  .main-grid { display: grid; grid-template-columns: 160px 1fr 140px; gap: 12px; }
+
+  .sidebar { display: flex; flex-direction: column; gap: 8px; }
+  .sidebar-card { background: var(--card); border: 1.5px solid; border-radius: 10px; padding: 10px 12px; box-shadow: var(--shadow); }
+  .sidebar-card h4 { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+  .sidebar-card p { font-size: 9px; color: var(--muted); line-height: 1.5; }
+
+  .outcome { background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px; text-align: right; box-shadow: var(--shadow); }
+  .outcome strong { font-size: 10px; font-weight: 700; display: block; }
+  .outcome span { font-size: 9px; color: var(--muted); }
+
+  .arrow-h { font-size: 9px; font-family: 'JetBrains Mono', monospace; color: var(--muted); text-align: center; padding: 3px 0; letter-spacing: 0.5px; }
+
+  .tags { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; margin-top: 14px; }
+  .tag { font-size: 8px; font-family: 'JetBrains Mono', monospace; padding: 2px 7px; border-radius: 20px; background: rgba(0,0,0,0.03); border: 1px solid var(--border); color: var(--muted); }
+  .footer { text-align: center; margin-top: 16px; font-size: 10px; color: var(--muted); font-weight: 300; line-height: 1.7; }
+  .footer strong { font-weight: 500; color: var(--text); }
+
+  .infra-bar { background: var(--navy); color: white; text-align: center; padding: 8px; border-radius: 8px; font-size: 10px; font-weight: 500; letter-spacing: 1px; margin-top: 10px; }
+  .infra-bar span { font-weight: 300; opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<div class="diagram">
+  <h1>AWS-Powered Aerospace <span>Digital Thread</span></h1>
+  <p class="subtitle">One Defect. Five Domains. Ten Minutes. &mdash; Event-driven aerospace enterprise architecture with AI agents</p>
+
+  <div class="main-grid">
+
+    <!-- ═══ LEFT SIDEBAR: 10 AI Agents on AgentCore Runtime ═══ -->
+    <div class="sidebar">
+      <div class="sidebar-card" style="border-color: rgba(8,145,178,0.5); background: rgba(8,145,178,0.06);">
+        <h4 class="c-aws">AgentCore Runtime</h4>
+        <p>Strands SDK &middot; ARM64 &middot; Claude Sonnet 4.6<br>S3 sessions &middot; HITL suspend/resume<br>YAML config &middot; EventBridge &rarr; SQS</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(8,145,178,0.35);">
+        <h4 class="c-aws">AWS Agent Registry</h4>
+        <p>Semantic agent discovery &middot; ARN resolve<br>Agents find + call peers via A2A</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(194,65,12,0.35);">
+        <h4 style="color:var(--orange)">1. Conformance Guardian</h4>
+        <p>NCR pattern detection &middot; supplier trends<br>HITL escalation for MAJOR/CRITICAL</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(79,70,229,0.3);">
+        <h4 class="c-accent">2. Change Impact Analyst</h4>
+        <p>ECO blast radius &middot; WO hold recs<br>Effectivity planning</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(8,145,178,0.3);">
+        <h4 class="c-aws">3. Production Flow Optimizer</h4>
+        <p>Cascade risk &middot; alternate routing<br>Kit shortage expedite</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(194,65,12,0.3);">
+        <h4 style="color:var(--orange)">4. Supplier Risk Sentinel</h4>
+        <p>OTD + quality scoring<br>Dual-source evaluation trigger</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(5,150,105,0.35);">
+        <h4 class="c-green">5. Certification Tracker</h4>
+        <p>DO-178C / AS9100 / FAR-21<br>ThreadGap routing &middot; DER review</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(8,145,178,0.3);">
+        <h4 class="c-aws">6. Predictive Maintenance</h4>
+        <p>Bearing wear signature<br>Predictive WO creation</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(5,150,105,0.3);">
+        <h4 class="c-green">7. DHR Completeness</h4>
+        <p>Serial record tracking<br>Missing cert/test escalation</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(79,70,229,0.3);">
+        <h4 class="c-accent">8. Program Risk Agent</h4>
+        <p>SPI/CPI monitoring<br>Milestone confidence tracking</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(30,58,95,0.3);">
+        <h4 class="c-navy">9. Fleet Health Agent</h4>
+        <p>Digital twin anomalies<br>Fleet advisory correlation</p>
+      </div>
+      <div class="sidebar-card" style="border-color: rgba(194,65,12,0.3);">
+        <h4 style="color:var(--orange)">10. SCADA Anomaly Agent</h4>
+        <p>Machine fault response<br>OEE breach impact assessment</p>
+      </div>
+      <div style="font-size:8px; color:var(--muted); text-align:center; font-family:'JetBrains Mono',monospace; letter-spacing:0.5px; margin-top:4px;">
+        Agents traverse all layers<br>&mdash; enabling E2E automation
+      </div>
+    </div>
+
+    <!-- ═══ CENTER: Enterprise Layers (bottom-up) ═══ -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <!-- User Centric Environment → Dashboards -->
+      <div class="layer" style="background:rgba(8,145,178,0.03); border-color:rgba(8,145,178,0.2);">
+        <span class="layer-label c-aws">Dashboards &mdash; User Centric Environment</span>
+        <div class="row">
+          <div class="node small"><strong>Quality</strong><span class="sub">NCR feed &middot; Agent Activity &middot; HITL</span></div>
+          <div class="node small"><strong>Shop Floor</strong><span class="sub">MQTT &middot; OEE &middot; work orders</span></div>
+          <div class="node small"><strong>Supply Chain</strong><span class="sub">PO &middot; kitting &middot; suppliers</span></div>
+          <div class="node small"><strong>Program</strong><span class="sub">milestones &middot; EV metrics</span></div>
+          <div class="node small"><strong>Fleet</strong><span class="sub">digital twin &middot; anomalies</span></div>
+        </div>
+        <div class="row" style="margin-top:8px; gap:6px;">
+          <div class="node tiny">AppSync subscriptions</div>
+          <div class="node tiny">IoT Core MQTT</div>
+          <div class="node tiny">Cognito auth</div>
+          <div class="node tiny">HITL panel &mdash; human decides</div>
+        </div>
+      </div>
+
+      <!-- Knowledge Graph → Neptune Digital Thread -->
+      <div class="layer b-green">
+        <span class="layer-label c-green">Knowledge Graph &mdash; Digital Thread</span>
+        <div class="row">
+          <div class="node"><div><strong class="c-green">Neptune Serverless</strong><span class="sub">Domain Logical View &middot; Single Source of Truth</span></div></div>
+          <div class="node small"><div><strong>Engineering View</strong><span class="sub">parts &middot; drawings &middot; BOMs</span></div></div>
+          <div class="node small"><div><strong>Manufacturing View</strong><span class="sub">WOs &middot; operations &middot; DHR</span></div></div>
+          <div class="node small"><div><strong>Quality View</strong><span class="sub">NCRs &middot; CAPAs &middot; gaps</span></div></div>
+        </div>
+        <div class="row" style="margin-top:8px; gap:6px;">
+          <div class="node tiny" style="border-color:rgba(5,150,105,0.3)"><strong>Fast Consumer</strong> &mdash; graph writer</div>
+          <div class="node tiny" style="border-color:rgba(5,150,105,0.3)"><strong>Slow Consumer</strong> &mdash; Cert Readiness</div>
+          <div class="node tiny"><strong class="c-green">Digital Thread Page</strong> &mdash; cert readiness + graph viz</div>
+        </div>
+      </div>
+
+      <!-- Data Service Layer → MSK + EventBridge + Analytics -->
+      <div class="layer b-orange">
+        <span class="layer-label c-orange">Data Service Layer &mdash; Event Backbone + Analytics</span>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div>
+            <div class="row" style="margin-bottom:6px;">
+              <div class="node small"><div><strong class="c-orange">MSK Provisioned</strong><span class="sub">11 topics &middot; Kafka 3.5.1</span></div></div>
+              <div class="node small"><div><strong class="c-orange">EventBridge</strong><span class="sub">aerospace-central &middot; rules</span></div></div>
+            </div>
+            <div class="row">
+              <div class="node tiny"><strong class="c-orange">ISA-95 Normalizer</strong> &mdash; ERP/PLM raw &rarr; ISA-95</div>
+              <div class="node tiny">MSK Connect &mdash; EB Sink</div>
+            </div>
+            <div class="row">
+              <div class="node tiny">Lambda producers</div>
+              <div class="node tiny">DDB Streams</div>
+            </div>
+          </div>
+          <div class="layer b-accent" style="margin:0; padding:16px 12px 12px;">
+            <span class="layer-label c-accent" style="font-size:8px">Federated Data Catalog</span>
+            <div class="col" style="gap:4px;">
+              <div class="node tiny"><strong class="c-accent">Athena</strong> &mdash; SQL analytics</div>
+              <div class="node tiny"><strong class="c-accent">S3 Iceberg</strong> &mdash; parquet datalake</div>
+              <div class="node tiny"><strong>Glue Catalog</strong> &mdash; table metadata</div>
+              <div class="node tiny"><strong>Firehose</strong> &mdash; DirectPut &rarr; Iceberg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System of Records → 10 Source Systems -->
+      <div class="layer b-navy">
+        <span class="layer-label c-navy">System of Records &mdash; 10 Source Systems</span>
+        <div class="row">
+          <div class="node tiny"><strong>QMS</strong><span class="sub">qms-demo</span></div>
+          <div class="node tiny"><strong>MES</strong><span class="sub">mes-demo</span></div>
+          <div class="node tiny"><strong>PLM</strong><span class="sub">plm-demo</span></div>
+          <div class="node tiny"><strong>ERP</strong><span class="sub">erp-demo</span></div>
+          <div class="node tiny"><strong>SRM</strong><span class="sub">srm-demo</span></div>
+          <div class="node tiny"><strong>WMS</strong><span class="sub">wms-demo</span></div>
+          <div class="node tiny"><strong>DHR</strong><span class="sub">dhr-demo</span></div>
+          <div class="node tiny"><strong>Program</strong><span class="sub">program-demo</span></div>
+          <div class="node tiny"><strong>In-Service</strong><span class="sub">inservice-demo</span></div>
+          <div class="node tiny" style="border-color:rgba(194,65,12,0.3)"><strong class="c-orange">SCADA</strong><span class="sub">IoT Core</span></div>
+        </div>
+        <div style="display:flex; justify-content:center; margin-top:8px;">
+          <div class="node tiny" style="border-color:rgba(79,70,229,0.3)"><strong class="c-accent">ECS Generator Service</strong> &mdash; 9 generators + SCADA MQTT loop &middot; demo-control</div>
+        </div>
+      </div>
+
+    </div><!-- end center column -->
+
+    <!-- ═══ RIGHT SIDEBAR: Business Outcomes (aligned with layers) ═══ -->
+    <div class="sidebar">
+      <div class="outcome" style="border-color: rgba(8,145,178,0.25);">
+        <strong class="c-aws">End-User Satisfaction</strong>
+        <span>Real-time dashboards &middot; HITL panels &middot; zero-refresh updates</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(5,150,105,0.25);">
+        <strong class="c-green">Time to Market Reduction</strong>
+        <span>Full traceability &middot; cert readiness in real-time &middot; 4 domain views</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(194,65,12,0.25);">
+        <strong class="c-orange">End to End Digital Continuity</strong>
+        <span>Event backbone connects all 10 systems &middot; no point-to-point</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(30,58,95,0.25);">
+        <strong class="c-navy">Business Continuity</strong>
+        <span>Decoupled systems &middot; event replay &middot; Iceberg time travel</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(79,70,229,0.25);">
+        <strong class="c-accent">AI-Augmented Decisions</strong>
+        <span>10 agents detect patterns<br>Humans authorize every action</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(194,65,12,0.25);">
+        <strong class="c-orange">Cost Efficiency</strong>
+        <span>Serverless &middot; pay-per-use<br>No idle infrastructure</span>
+      </div>
+      <div class="outcome" style="border-color: rgba(5,150,105,0.25);">
+        <strong class="c-green">Cert Readiness</strong>
+        <span>DO-178C / AS9100 / FAR-21<br>Automated gap detection</span>
+      </div>
+    </div>
+
+  </div><!-- end main-grid -->
+
+  <!-- Infrastructure bar -->
+  <div class="infra-bar">
+    Secured and robust infrastructure &mdash; <span>Sovereign by design</span> &mdash; AWS CDK &middot; eu-west-1
+  </div>
+
+  <!-- HITL FLOW -->
+  <div class="layer" style="margin-top:12px; background: rgba(79,70,229,0.02); border-color: rgba(79,70,229,0.15);">
+    <span class="layer-label c-accent">Human-in-the-Loop &mdash; Agents Prepare, Humans Decide</span>
+    <div style="display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; font-size:10px; font-family:'JetBrains Mono',monospace; color:var(--muted);">
+      <span class="node tiny" style="border-color:rgba(194,65,12,0.3)">Quality Event</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(8,145,178,0.3)">Agent analyzes</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(79,70,229,0.3)">ask_human</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(5,150,105,0.3)">Dashboard HITL</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(8,145,178,0.3)">Human answers</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(8,145,178,0.3)">Agent resumes</span>
+      <span>&rarr;</span>
+      <span class="node tiny" style="border-color:rgba(5,150,105,0.3)">Finding published</span>
+    </div>
+  </div>
+
+  <div class="tags">
+    <span class="tag">AWS CDK</span><span class="tag">12 CloudFormation stacks</span><span class="tag">eu-west-1</span>
+    <span class="tag">Docker ARM64</span><span class="tag">Strands Agents</span><span class="tag">AgentCore Runtime</span>
+    <span class="tag">MSK Provisioned</span><span class="tag">Neptune Serverless</span><span class="tag">S3 Iceberg</span>
+    <span class="tag">IoT Core MQTT</span><span class="tag">AppSync</span><span class="tag">Cognito</span><span class="tag">Bedrock Claude</span>
+  </div>
+
+  <div class="footer">
+    <strong>10 source systems</strong> &times; <strong>9 generators</strong> &times; <strong>10 agents</strong> on AgentCore &middot;
+    <strong>Neptune</strong> knowledge graph &middot; <strong>Iceberg</strong> datalake &middot; <strong>5 dashboards</strong> + Digital Thread<br>
+    Mirrors aerospace enterprise architecture: System of Records &rarr; Data Service Layer &rarr; Knowledge Graph &rarr; Dashboards &rarr; AI Agents
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+1
+00:00:01,000 --> 00:00:08,992
+This is ARES-1: one wing-box serial number, tracked end to end across every system, with AI agents driving the process and humans deciding.
+
+2
+00:00:18,500 --> 00:00:28,795
+The whole architecture in one frame. Ten AI agents, five dashboards, a Neptune knowledge graph as the single source of truth, an event backbone, and ten systems of record.
+
+3
+00:00:30,500 --> 00:00:33,307
+We open the digital thread for serial number forty-seven.
+
+4
+00:00:36,000 --> 00:00:46,391
+Every system, as one connected graph. Three thousand nodes across engineering, manufacturing, quality, supply chain, and the fleet, with certification readiness scored live.
+
+5
+00:00:48,500 --> 00:00:55,579
+Search the graph for a part, and its actual two-D engineering drawing renders inline. Unstructured data, living on the thread.
+
+6
+00:00:56,500 --> 00:01:05,091
+On the quality dashboard, agents reason over every non-conformance and escalate what matters. But they never decide. A human authorizes the disposition.
+
+7
+00:01:07,000 --> 00:01:15,400
+And behind each escalation is a full audit trail: a six-agent cascade. Invoked, asked a human, published a finding, and called another agent.
+
+8
+00:01:21,000 --> 00:01:26,760
+The shop floor is the real-time edge: live, one-hertz machine telemetry feeding a predictive-maintenance agent.
+
+9
+00:01:31,000 --> 00:01:40,239
+Supply chain, program, and the in-service fleet. The same thread, every domain, design to flight. Agents prepare. Humans decide.

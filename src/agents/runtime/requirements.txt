@@ -1,0 +1,8 @@
+boto3>=1.43.0  # AWS Agent Registry ops (CreateRegistryRecord, SearchRegistryRecords) — see spikes/agent-registry/FINDINGS.md
+strands-agents[a2a]>=0.1.0
+strands-agents-tools>=0.1.0
+requests>=2.31.0
+httpx>=0.27.0
+pyyaml>=6.0
+fastapi>=0.115.0
+uvicorn>=0.32.0

@@ -1,0 +1,3 @@
+# Lambda's built-in boto3 lags the Agent Registry preview — bundle a recent SDK.
+boto3>=1.43.0
+botocore>=1.43.0

@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  /* ============================================================
+     AWS 2024 brand direction.
+     Anchors Gray 850 #161d26 / white measured from the AWS
+     PowerPoint theme. The six accents fail as text on white
+     (none clears 4.5:1) so they are reserved for the dark nav
+     band, status dots and data-vis fills; body/table text is the
+     dark anchor. See docs/specs/wireframes + issue #1.
+     ============================================================ */
+
+  /* Light surfaces */
+  --color-surface-app: #f3f3f7;
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f8f8fb;
+  --color-surface-tertiary: #eeeef3;
+
+  /* Text hierarchy — anchored on Gray 850 */
+  --color-text-primary: #161d26;
+  --color-text-secondary: #3b4450;
+  --color-text-tertiary: #5a6472;
+  --color-text-muted: #8b93a1;
+
+  /* Borders */
+  --color-border: #e4e4ea;
+  --color-border-strong: #c6c6cd;
+
+  /* Accent — the dark anchor is the safe default for type/rules on
+     a light page; accent-fill carries AWS blue for graphic fills only */
+  --color-accent: #161d26;
+  --color-accent-hover: #000000;
+  --color-accent-subtle: rgba(22, 29, 38, 0.06);
+  --color-accent-fill: #41b3ff;
+
+  /* Dark band (top nav) — the one dark ground */
+  --color-band: #161d26;
+  --color-band-deep: #000000;
+  --color-on-band: #ffffff;
+  --color-on-band-muted: #b9bec7;
+
+  /* Semantic status — meaning preserved; -text variants clear AA on
+     white, -subtle tints for badge backgrounds, base for dots/fills */
+  --color-status-success: #1c8a3b;
+  --color-status-success-subtle: rgba(28, 138, 59, 0.1);
+  --color-status-success-text: #14622a;
+  --color-status-warning: #b8420f;
+  --color-status-warning-subtle: rgba(184, 66, 15, 0.1);
+  --color-status-warning-text: #8a3208;
+  --color-status-error: #c0182f;
+  --color-status-error-subtle: rgba(192, 24, 47, 0.1);
+  --color-status-error-text: #991b26;
+  --color-status-info: #1c5aa8;
+  --color-status-info-subtle: rgba(28, 90, 168, 0.1);
+  --color-status-info-text: #164a8a;
+
+  /* Purple for dispositioned / agent findings */
+  --color-status-purple: #6b3fb0;
+  --color-status-purple-subtle: rgba(107, 63, 176, 0.1);
+  --color-status-purple-text: #542f8f;
+
+  /* AWS 2024 accent set — dark grounds & data-vis fills only */
+  --color-brand-blue: #41b3ff;
+  --color-brand-purple: #ad5cff;
+  --color-brand-green: #00e500;
+  --color-brand-pink: #ff5c85;
+  --color-brand-orange: #ff693c;
+  --color-brand-yellow: #fbd332;
+
+  /* Fonts — Amazon Ember is licensed to Amazon; falls back to the
+     system stack (type is approximated outside AWS). */
+  --font-display: 'Amazon Ember', 'Amazon Ember Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-data: 'Amazon Ember Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+body {
+  font-family: var(--font-display);
+  background-color: var(--color-surface-app);
+  color: var(--color-text-primary);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

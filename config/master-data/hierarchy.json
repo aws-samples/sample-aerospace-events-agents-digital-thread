@@ -1,0 +1,29 @@
+{
+  "$comment": "ISA-95:2018 Part 1 — physical equipment hierarchy. Reference data; seeded once.",
+  "enterprise": {
+    "id": "ARES",
+    "name": "Ares"
+  },
+  "sites": [
+    { "id": "MRD", "name": "Meridian", "enterpriseId": "ARES" },
+    { "id": "ASH", "name": "Ashford",  "enterpriseId": "ARES" }
+  ],
+  "areas": [
+    { "id": "WBA-MRD", "name": "Wing Box Final Assembly", "siteId": "MRD" },
+    { "id": "WBS-ASH", "name": "Wing Box Sub-Assembly",   "siteId": "ASH" }
+  ],
+  "workCenters": [
+    { "id": "CELL-1", "name": "Rough Machining Cell",   "areaId": "WBA-MRD", "cellId": "cell-1" },
+    { "id": "CELL-2", "name": "Semi-finish Cell",       "areaId": "WBA-MRD", "cellId": "cell-2" },
+    { "id": "CELL-3", "name": "Finish Machining Cell",  "areaId": "WBA-MRD", "cellId": "cell-3" },
+    { "id": "CELL-4", "name": "Boring Cell",            "areaId": "WBS-ASH", "cellId": "cell-4" },
+    { "id": "CELL-5", "name": "Threading Cell",         "areaId": "WBS-ASH", "cellId": "cell-5" }
+  ],
+  "workUnits": [
+    { "id": "cnc-mill-1",     "name": "CNC Mill 1",     "workCenterId": "CELL-1", "type": "CNCMill" },
+    { "id": "cnc-mill-2",     "name": "CNC Mill 2",     "workCenterId": "CELL-2", "type": "CNCMill" },
+    { "id": "cnc-mill-3",     "name": "CNC Mill 3",     "workCenterId": "CELL-3", "type": "CNCMill" },
+    { "id": "lathe-1",        "name": "Lathe 1",        "workCenterId": "CELL-4", "type": "Lathe" },
+    { "id": "drill-press-1",  "name": "Drill Press 1",  "workCenterId": "CELL-5", "type": "DrillPress" }
+  ]
+}

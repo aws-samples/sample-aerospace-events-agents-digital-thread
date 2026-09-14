@@ -1,0 +1,141 @@
+{
+  "v1": {
+    "per_question": {
+      "q01": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q02": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q03": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q04": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q05": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q06": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q07": {
+        "correct": 0,
+        "runs": 3,
+        "fail_samples": [
+          {
+            "sql": "SELECT\n    COALESCE(json_extract_scalar(payload, '$.supplierName'),\n             json_extract_scalar(payload, '$.supplierId')) AS supplier,\n    SUM(CAST(json_extract_scalar(payload, '$.amount') AS DOUBLE)) AS total_matched_amount\nFROM aerospace_events.domain_events\nWHERE domain = 'ERP'\n  AND event_type = 'INVOICE_MATCHED'\nGROUP BY\n    COALESCE(json_extract_scalar(payload, '$.supplierName'),\n             json_extract_scalar(payload, '$.supplierId'))\nORDER BY total_matched_amount DESC",
+            "error": null,
+            "rowcount": 3
+          },
+          {
+            "sql": "SELECT\n    json_extract_scalar(payload, '$.supplierName') AS supplier_name,\n    SUM(CAST(json_extract_scalar(payload, '$.amount') AS DOUBLE)) AS total_matched_amount\nFROM aerospace_events.domain_events\nWHERE domain = 'ERP'\n  AND event_type = 'INVOICE_MATCHED'\nGROUP BY json_extract_scalar(payload, '$.supplierName')\nORDER BY total_matched_amount DESC",
+            "error": null,
+            "rowcount": 3
+          }
+        ]
+      },
+      "q08": {
+        "correct": 0,
+        "runs": 3,
+        "fail_samples": [
+          {
+            "sql": "SELECT\n  json_extract_scalar(payload, '$.cellId') AS production_cell,\n  COUNT(*) AS work_orders_started\nFROM aerospace_events.domain_events\nWHERE domain = 'MES'\n  AND event_type = 'WORK_ORDER_STARTED'\nGROUP BY json_extract_scalar(payload, '$.cellId')\nORDER BY work_orders_started DESC",
+            "error": null,
+            "rowcount": 1
+          },
+          {
+            "sql": "SELECT\n  json_extract_scalar(payload, '$.productionCell') AS production_cell,\n  COUNT(*) AS work_orders_started\nFROM aerospace_events.domain_events\nWHERE domain = 'MES'\n  AND event_type = 'WORK_ORDER_STARTED'\nGROUP BY json_extract_scalar(payload, '$.productionCell')\nORDER BY work_orders_started DESC",
+            "error": null,
+            "rowcount": 1
+          }
+        ]
+      },
+      "q09": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q10": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      }
+    },
+    "flaky": [],
+    "always_wrong": [
+      "q07",
+      "q08"
+    ],
+    "aggregate_correct_pct": 80.0
+  },
+  "v3": {
+    "per_question": {
+      "q01": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q02": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q03": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q04": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q05": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q06": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q07": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q08": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q09": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q10": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      }
+    },
+    "flaky": [],
+    "always_wrong": [],
+    "aggregate_correct_pct": 100.0
+  }
+}

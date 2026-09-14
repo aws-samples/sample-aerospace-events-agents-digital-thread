@@ -1,0 +1,7 @@
+  [Area       ] WBA-MRD      Wing Box Final Assembly
+  [WorkCenter ] CELL-1       Rough Machining Cell
+  [WorkCenter ] CELL-2       Semi-finish Cell
+  [WorkCenter ] CELL-3       Finish Machining Cell
+  [WorkUnit   ] cnc-mill-1   CNC Mill 1
+  [WorkUnit   ] cnc-mill-2   CNC Mill 2
+  [WorkUnit   ] cnc-mill-3   CNC Mill 3

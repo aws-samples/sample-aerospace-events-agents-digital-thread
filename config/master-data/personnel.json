@@ -1,0 +1,36 @@
+{
+  "$comment": "ISA-95:2018 Part 2 — personnel master data. PersonnelClass groups people by qualification.",
+  "personnelClasses": [
+    { "id": "OP-A1", "name": "Operator Level 1",   "qualification": "basic" },
+    { "id": "OP-A2", "name": "Operator Level 2",   "qualification": "intermediate" },
+    { "id": "OP-A3", "name": "Operator Level 3",   "qualification": "senior" },
+    { "id": "INSP-2","name": "Inspector Level 2",  "qualification": "inspector" },
+    { "id": "INSP-3","name": "Inspector Level 3",  "qualification": "lead-inspector" },
+    { "id": "SUP",   "name": "Supervisor",         "qualification": "supervisor" }
+  ],
+  "people": [
+    { "id": "op-garcia",     "name": "M. Garcia",     "personnelClassId": "OP-A2", "siteId": "MRD" },
+    { "id": "op-rivera",     "name": "L. Rivera",     "personnelClassId": "OP-A2", "siteId": "MRD" },
+    { "id": "op-patel",      "name": "R. Patel",      "personnelClassId": "OP-A3", "siteId": "MRD" },
+    { "id": "op-kim",        "name": "J. Kim",        "personnelClassId": "OP-A2", "siteId": "ASH" },
+    { "id": "op-tanaka",     "name": "K. Tanaka",     "personnelClassId": "OP-A3", "siteId": "ASH" },
+    { "id": "op-singh",      "name": "A. Singh",      "personnelClassId": "OP-A2", "siteId": "MRD" },
+    { "id": "op-mueller",    "name": "S. Mueller",    "personnelClassId": "OP-A1", "siteId": "ASH" },
+    { "id": "op-johansson",  "name": "P. Johansson",  "personnelClassId": "OP-A2", "siteId": "MRD" },
+    { "id": "op-rossi",      "name": "G. Rossi",      "personnelClassId": "OP-A1", "siteId": "MRD" },
+    { "id": "op-lopez",      "name": "C. Lopez",      "personnelClassId": "OP-A2", "siteId": "ASH" },
+    { "id": "op-ito",        "name": "H. Ito",        "personnelClassId": "OP-A1", "siteId": "ASH" },
+    { "id": "op-svensson",   "name": "E. Svensson",   "personnelClassId": "OP-A2", "siteId": "MRD" },
+    { "id": "op-vogt",       "name": "T. Vogt",       "personnelClassId": "OP-A2", "siteId": "ASH" },
+    { "id": "op-cohen",      "name": "D. Cohen",      "personnelClassId": "OP-A3", "siteId": "MRD" },
+    { "id": "op-zhang",      "name": "W. Zhang",      "personnelClassId": "OP-A2", "siteId": "ASH" },
+    { "id": "insp-bauer",    "name": "F. Bauer",      "personnelClassId": "INSP-3","siteId": "MRD" },
+    { "id": "insp-meyer",    "name": "U. Meyer",      "personnelClassId": "INSP-2","siteId": "ASH" },
+    { "id": "insp-dubois",   "name": "M. Dubois",     "personnelClassId": "INSP-3","siteId": "MRD" },
+    { "id": "insp-park",     "name": "S. Park",       "personnelClassId": "INSP-2","siteId": "ASH" },
+    { "id": "insp-hassan",   "name": "Y. Hassan",     "personnelClassId": "INSP-2","siteId": "MRD" },
+    { "id": "sup-laurent",   "name": "P. Laurent",    "personnelClassId": "SUP",   "siteId": "MRD" },
+    { "id": "sup-becker",    "name": "K. Becker",     "personnelClassId": "SUP",   "siteId": "ASH" },
+    { "id": "sup-vasquez",   "name": "I. Vasquez",    "personnelClassId": "SUP",   "siteId": "MRD" }
+  ]
+}

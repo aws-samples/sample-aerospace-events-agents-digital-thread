@@ -1,0 +1,98 @@
+[
+  {
+    "name": "update_ncr_disposition",
+    "description": "Update NCR disposition after human approval. Writes to QMS source system, cascades through event pipeline (DDB → MSK → Neptune).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "NCR ID (e.g. NCR-1711234-456)" },
+        "disposition": { "type": "string", "description": "Disposition decision: USE_AS_IS, REWORK, SCRAP, or RETURN_TO_SUPPLIER" },
+        "reason": { "type": "string", "description": "Human-approved rationale for the disposition" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["entity_id", "disposition", "reason"]
+    }
+  },
+  {
+    "name": "release_work_order_hold",
+    "description": "Release a hold on a work order after human approval. Writes to MES source system, cascades through event pipeline.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "Work order ID (e.g. WO-82451)" },
+        "reason": { "type": "string", "description": "Human-approved rationale for releasing the hold" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["entity_id", "reason"]
+    }
+  },
+  {
+    "name": "update_supplier_score",
+    "description": "Update supplier quality score after human approval. Writes to SRM source system, cascades through event pipeline.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "Supplier ID (e.g. titan-forge)" },
+        "score": { "type": "number", "description": "New quality score (0-100)" },
+        "reason": { "type": "string", "description": "Human-approved rationale for the score change" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["entity_id", "score", "reason"]
+    }
+  },
+  {
+    "name": "create_engineering_change",
+    "description": "Create an Engineering Change Order (ECO) after human approval. Writes to PLM source system, cascades through event pipeline.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "Optional ECO ID (auto-generated if omitted)" },
+        "part_number": { "type": "string", "description": "Part number affected by the change" },
+        "change_type": { "type": "string", "description": "Type of change: REVISION, DEVIATION, or CONCESSION" },
+        "reason": { "type": "string", "description": "Human-approved rationale for the engineering change" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["part_number", "change_type", "reason"]
+    }
+  },
+  {
+    "name": "update_milestone_status",
+    "description": "Update program milestone risk status after human approval. Writes to Program source system, cascades through event pipeline.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "Milestone ID (e.g. MS-004)" },
+        "status": { "type": "string", "description": "Risk status: ON_TRACK, AT_RISK, or DELAYED" },
+        "reason": { "type": "string", "description": "Human-approved rationale for the status change" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["entity_id", "status", "reason"]
+    }
+  },
+  {
+    "name": "log_maintenance_action",
+    "description": "Log a fleet maintenance action after human approval. Writes to InService source system, cascades through event pipeline.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "entity_id": { "type": "string", "description": "Serial number (e.g. SN-0038)" },
+        "action_type": { "type": "string", "description": "Maintenance action type: ADVISORY, INSPECTION, or SERVICE_BULLETIN" },
+        "reason": { "type": "string", "description": "Human-approved rationale for the maintenance action" },
+        "agent_id": { "type": "string", "description": "ID of the calling agent" },
+        "session_id": { "type": "string", "description": "Agent session ID" },
+        "correlation_id": { "type": "string", "description": "Event correlation ID" }
+      },
+      "required": ["entity_id", "action_type", "reason"]
+    }
+  }
+]

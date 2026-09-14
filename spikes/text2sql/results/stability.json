@@ -1,0 +1,149 @@
+{
+  "v1": {
+    "per_question": {
+      "q01": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q02": {
+        "correct": 2,
+        "runs": 3,
+        "fail_samples": [
+          {
+            "sql": "SELECT\n    SUBSTR(occurred_at, 1, 10)                                      AS event_date,\n    json_extract_scalar(payload, '$.period')                        AS period,\n    CAST(json_extract_scalar(payload, '$.cpi') AS DOUBLE)           AS cpi,\n    CAST(json_extract_scalar(payload, '$.spi') AS DOUBLE)           AS spi,\n    json_extract_scalar(payload, '$.programId')                     AS program_id,\n    occurred_at,\n    event_id\nFROM\n    aerospace_events.domain_events\nWHERE\n    domain        = 'PROGRAM'\n    AND event_type    = 'EV_UPDATED'\n    AND entity_id     = 'ARES-1'\n    AND entity_type   = 'PROGRAM'\nORDER BY\n    occurred_at ASC",
+            "error": null,
+            "rowcount": 0
+          }
+        ]
+      },
+      "q03": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q04": {
+        "correct": 1,
+        "runs": 3,
+        "fail_samples": [
+          {
+            "sql": "SELECT\n    event_id,\n    occurred_at,\n    entity_id,\n    source_system,\n    json_extract_scalar(payload, '$.serialNumber')  AS serial_number,\n    json_extract_scalar(payload, '$.parameter')     AS parameter,\n    json_extract_scalar(payload, '$.actualValue')   AS actual_value,\n    json_extract_scalar(payload, '$.expectedValue') AS expected_value,\n    json_extract_scalar(payload, '$.deviation')     AS deviation,\n    json_extract_scalar(payload, '$.unit')          AS unit,\n    json_extract_scalar(payload, '$.status')        AS anomaly_status\nFROM\n    aerospace_events.domain_events\nWHERE\n    domain      = 'INSERVICE'\n    AND event_type  = 'DT_ANOMALY'\n    AND entity_type = 'DIGITAL_TWIN'\n    AND substr(occurred_at, 1, 7) = substr(cast(current_date AS varchar), 1, 7)\nORDER BY\n    occurred_at DESC",
+            "error": null,
+            "rowcount": 0
+          },
+          {
+            "sql": "SELECT\n    event_id,\n    occurred_at,\n    entity_id,\n    source_system,\n    json_extract_scalar(payload, '$.serialNumber')  AS serial_number,\n    json_extract_scalar(payload, '$.parameter')     AS parameter,\n    json_extract_scalar(payload, '$.actualValue')   AS actual_value,\n    json_extract_scalar(payload, '$.expectedValue') AS expected_value,\n    json_extract_scalar(payload, '$.deviation')     AS deviation,\n    json_extract_scalar(payload, '$.unit')          AS unit,\n    json_extract_scalar(payload, '$.status')        AS anomaly_status\nFROM\n    aerospace_events.domain_events\nWHERE\n    domain      = 'INSERVICE'\n    AND event_type  = 'DT_ANOMALY'\n    AND entity_type = 'DIGITAL_TWIN'\n    AND substr(occurred_at, 1, 7) = substr(cast(current_date AS varchar), 1, 7)\nORDER BY\n    occurred_at DESC",
+            "error": null,
+            "rowcount": 0
+          }
+        ]
+      },
+      "q05": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q06": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q07": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q08": {
+        "correct": 0,
+        "runs": 3,
+        "fail_samples": [
+          {
+            "sql": "SELECT\n    json_extract_scalar(payload, '$.productionCell') AS production_cell,\n    COUNT(*) AS work_orders_started\nFROM aerospace_events.domain_events\nWHERE event_type = 'WORK_ORDER_STARTED'\nGROUP BY json_extract_scalar(payload, '$.productionCell')\nORDER BY work_orders_started DESC",
+            "error": null,
+            "rowcount": 1
+          },
+          {
+            "sql": "SELECT\n    json_extract_scalar(payload, '$.productionCell') AS production_cell,\n    COUNT(*) AS work_orders_started\nFROM aerospace_events.domain_events\nWHERE event_type = 'WORK_ORDER_STARTED'\nGROUP BY json_extract_scalar(payload, '$.productionCell')\nORDER BY work_orders_started DESC",
+            "error": null,
+            "rowcount": 1
+          }
+        ]
+      },
+      "q09": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q10": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      }
+    },
+    "flaky": [
+      "q02",
+      "q04"
+    ],
+    "always_wrong": [
+      "q08"
+    ],
+    "aggregate_correct_pct": 80.0
+  },
+  "v3": {
+    "per_question": {
+      "q01": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q02": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q03": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q04": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q05": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q06": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q07": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q08": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q09": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      },
+      "q10": {
+        "correct": 3,
+        "runs": 3,
+        "fail_samples": []
+      }
+    },
+    "flaky": [],
+    "always_wrong": [],
+    "aggregate_correct_pct": 100.0
+  }
+}

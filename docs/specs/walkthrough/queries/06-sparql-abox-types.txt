@@ -1,0 +1,13 @@
+    12  MaterialLot
+    10  OperationsPerformance
+     7  MaterialSublot
+     6  JobResponse
+     5  Person
+     5  MaterialDefinition
+     4  JobOrder
+     3  Equipment
+     3  PurchaseOrder
+     3  ProductDefinitionDocument
+     3  Supplier
+     2  DigitalTwin
+     1  FleetAnomaly

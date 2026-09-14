@@ -1,0 +1,11 @@
+{
+  "name": "event-normalizer",
+  "private": true,
+  "dependencies": {
+    "aws-msk-iam-sasl-signer-js": "^1.0.0",
+    "kafkajs": "^2.2.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

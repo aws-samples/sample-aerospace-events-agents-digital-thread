@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- TITLE_ATTR --> · Digital Thread</title>
+<meta name="description" content="<!-- TAGLINE_ATTR -->">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Aerospace Events · Digital Thread — demo gallery
+   Engineering-dossier aesthetic. Shared design system
+   (identical CSS in index.html + demo.html).
+   ============================================================ */
+:root{
+  --ink:#0a0a0c; --ink-2:#0c0c10; --ink-3:#101016;
+  --surface:#141418; --surface-2:#17171d; --surface-hover:#1d1d25;
+  --line:#262630; --line-soft:#1b1b22; --line-bright:#34343f;
+  --text:#e9e7f0; --text-2:#9b99aa; --text-3:#646276; --text-4:#454354;
+  --blue:#4a9eff; --blue-bright:#6cb2ff; --blue-soft:rgba(74,158,255,.12);
+  --blue-line:rgba(74,158,255,.30); --blue-glow:rgba(74,158,255,.22);
+  --amber:#ff9a62; --green:#3ddc97; --violet:#b29cff;
+  --display:'Playfair Display',Georgia,serif;
+  --body:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',ui-monospace,monospace;
+  --radius:14px; --radius-sm:9px;
+  --shadow:0 1px 0 rgba(255,255,255,.02) inset,0 20px 50px -24px rgba(0,0,0,.85);
+  --shadow-lift:0 1px 0 rgba(255,255,255,.04) inset,0 32px 70px -28px rgba(0,0,0,.9);
+  --maxw:1120px; --read:824px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body); background:var(--ink); color:var(--text);
+  line-height:1.65; font-weight:400; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility; letter-spacing:.005em;
+  min-height:100vh; overflow-x:hidden;
+  background-image:
+    radial-gradient(900px 520px at 78% -8%, rgba(74,158,255,.10), transparent 60%),
+    radial-gradient(760px 480px at 8% 4%, rgba(178,156,255,.05), transparent 55%),
+    linear-gradient(180deg,#0b0b10 0%,#0a0a0c 38%,#0a0a0c 100%);
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(circle at 50% 0,#000,transparent 78%);
+          mask-image:radial-gradient(circle at 50% 0,#000,transparent 78%);
+}
+.wrap{position:relative; z-index:1; max-width:var(--maxw); margin:0 auto; padding:0 28px}
+a{color:inherit; text-decoration:none}
+::selection{background:var(--blue-glow); color:#fff}
+
+.eyebrow{font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--blue); display:inline-flex; align-items:center; gap:.7em}
+.eyebrow::before{content:""; width:26px; height:1px; background:linear-gradient(90deg,var(--blue),transparent)}
+
+/* top bar */
+.topbar{position:sticky; top:0; z-index:30; backdrop-filter:blur(14px);
+  background:rgba(10,10,12,.72); border-bottom:1px solid var(--line-soft)}
+.topbar .wrap{display:flex; align-items:center; justify-content:space-between; height:62px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:500; letter-spacing:.01em}
+.brand .mark{width:24px; height:24px; position:relative; flex:0 0 auto}
+.brand .mark::before,.brand .mark::after{content:""; position:absolute; border-radius:50%}
+.brand .mark::before{inset:0; border:1.5px solid var(--blue); opacity:.55}
+.brand .mark::after{inset:7px; background:var(--blue); box-shadow:0 0 12px var(--blue-glow)}
+.brand b{font-weight:600}
+.brand .sub{color:var(--text-3); font-weight:400}
+.topbar .meta{font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:var(--text-3); text-transform:uppercase}
+
+/* crumbs */
+.crumbs{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-3); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.crumbs a:hover{color:var(--blue)}
+.crumbs .back{display:inline-flex; align-items:center; gap:8px; color:var(--text-2)}
+.crumbs .back:hover{color:var(--blue)}
+.crumbs .back svg{width:13px; height:13px}
+.crumbs .sep{color:var(--text-4)}
+.crumbs .here{color:var(--text-2)}
+
+/* demo hero */
+.demo-hero{padding:46px 0 8px}
+.demo-hero .crumbs{margin-bottom:30px}
+.demo-hero .eyebrow{margin-bottom:18px}
+.demo-hero h1{font-family:var(--display); font-weight:800; font-size:clamp(32px,4.6vw,52px);
+  letter-spacing:-.018em; line-height:1.06; max-width:20ch;
+  background:linear-gradient(176deg,#fbfaff,#c9c7da 78%); -webkit-background-clip:text; background-clip:text; color:transparent}
+.demo-hero .tagline{margin-top:18px; max-width:66ch; font-size:18px; color:var(--text-2); font-weight:300; line-height:1.62}
+.demo-hero .tagline strong{color:var(--text); font-weight:500}
+
+/* video */
+.videoframe{margin:34px 0 8px; border-radius:var(--radius); overflow:hidden; position:relative;
+  border:1px solid var(--line); background:#000; box-shadow:var(--shadow-lift)}
+.videoframe::before{content:""; position:absolute; inset:0; border-radius:var(--radius);
+  box-shadow:0 0 0 1px rgba(74,158,255,.08) inset; pointer-events:none; z-index:2}
+.videoframe video{display:block; width:100%; height:auto; background:#000}
+.videocap{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--text-3);
+  text-transform:uppercase; margin:12px 2px 0; display:flex; align-items:center; gap:9px}
+.videocap::before{content:"▸"; color:var(--blue)}
+
+/* article body */
+.article{max-width:var(--read); margin:44px auto 0; padding-bottom:8px}
+.article h2{font-family:var(--display); font-weight:700; font-size:27px; letter-spacing:-.012em;
+  margin:50px 0 16px; line-height:1.18; scroll-margin-top:84px}
+.article h2::before{content:""; display:block; width:40px; height:2px; margin-bottom:18px;
+  background:linear-gradient(90deg,var(--blue),transparent)}
+.article h3{font-family:var(--display); font-weight:700; font-size:20px; margin:34px 0 12px; color:var(--text)}
+.article p{color:var(--text-2); font-size:16.5px; font-weight:300; line-height:1.74; margin:14px 0}
+.article p strong,.article li strong,.article td strong{color:var(--text); font-weight:600}
+.article a{color:var(--blue); text-decoration:none; border-bottom:1px solid var(--blue-line); transition:border-color .2s,color .2s}
+.article a:hover{color:var(--blue-bright); border-color:var(--blue)}
+.article ul,.article ol{margin:14px 0; padding-left:1.3em; color:var(--text-2); font-weight:300}
+.article li{margin:7px 0; font-size:16px; line-height:1.7}
+.article li::marker{color:var(--blue)}
+.article code{font-family:var(--mono); font-size:.86em; background:var(--ink-3); color:var(--blue-bright);
+  border:1px solid var(--line-soft); border-radius:6px; padding:.12em .42em}
+.article pre{background:var(--ink-2); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:18px 20px; overflow-x:auto; margin:20px 0; box-shadow:var(--shadow)}
+.article pre code{background:none; border:none; padding:0; color:var(--text-2); font-size:13px; line-height:1.7}
+.article blockquote{margin:22px 0; padding:14px 22px; border-left:2px solid var(--blue-line);
+  background:linear-gradient(90deg,var(--blue-soft),transparent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; color:var(--text-2); font-size:15.5px}
+.article blockquote p{margin:6px 0; color:var(--text-2)}
+.article hr{border:none; height:1px; background:linear-gradient(90deg,transparent,var(--line),transparent); margin:42px 0}
+.article figure{margin:30px 0}
+.article figure img{width:100%; height:auto; display:block; border-radius:var(--radius-sm);
+  border:1px solid var(--line); box-shadow:var(--shadow-lift)}
+.article figure figcaption{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--text-3);
+  text-transform:uppercase; margin-top:11px; text-align:center}
+.article img{max-width:100%; border-radius:var(--radius-sm)}
+.article table{width:100%; border-collapse:separate; border-spacing:0; margin:24px 0; font-size:14.5px;
+  border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; box-shadow:var(--shadow)}
+.article thead th{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-3); text-align:left; padding:13px 18px; background:var(--ink-3); border-bottom:1px solid var(--line)}
+.article tbody td{padding:12px 18px; border-bottom:1px solid var(--line-soft); color:var(--text-2); font-weight:300; vertical-align:top}
+.article tbody tr:last-child td{border-bottom:none}
+.article tbody tr:nth-child(even) td{background:rgba(255,255,255,.012)}
+.article tbody td strong{font-family:var(--mono); font-size:13.5px}
+.article td a{font-weight:400}
+
+/* pager */
+.pager{display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:var(--read); margin:54px auto 0}
+.pager a{display:flex; flex-direction:column; gap:6px; padding:20px 22px; border-radius:var(--radius);
+  border:1px solid var(--line-soft); background:var(--surface); transition:border-color .3s,background .3s,transform .3s}
+.pager a:hover{border-color:var(--blue-line); background:var(--surface-2); transform:translateY(-2px)}
+.pager .dir{font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--text-3)}
+.pager .ttl{font-family:var(--display); font-size:17px; font-weight:600; color:var(--text)}
+.pager .next{text-align:right; align-items:flex-end}
+.pager .empty{visibility:hidden}
+
+/* footer */
+.foot-site{margin-top:72px; border-top:1px solid var(--line-soft); padding:34px 0 60px}
+.foot-site .wrap{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px}
+.foot-site .note{color:var(--text-3); font-size:13.5px; font-weight:300; max-width:60ch}
+.foot-site .tags{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-4);
+  display:flex; gap:18px; flex-wrap:wrap}
+.foot-site .tags span{display:inline-flex; align-items:center; gap:7px}
+.foot-site .tags span::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--blue); opacity:.6}
+
+@media (prefers-reduced-motion:no-preference){
+  .reveal{opacity:0; transform:translateY(14px); animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.21s}
+}
+
+@media (max-width:820px){
+  .pager{grid-template-columns:1fr}
+  .pager .next{text-align:left; align-items:flex-start}
+  .topbar .meta{display:none}
+  .demo-hero{padding:34px 0 8px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="mark"></span>
+      <span><b>Digital Thread</b> <span class="sub">· demo gallery</span></span>
+    </a>
+    <span class="meta">AWS · eu-west-1 · AgentCore</span>
+  </div>
+</header>
+
+<main>
+  <section class="demo-hero wrap">
+    <nav class="crumbs reveal">
+      <a class="back" href="index.html">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12 6 8l4-4"/></svg>
+        All demos
+      </a>
+      <span class="sep">/</span>
+      <span class="here"><!-- CRUMB --></span>
+    </nav>
+    <span class="eyebrow reveal d1"><!-- KICKER --></span>
+    <h1 class="reveal d1"><!-- TITLE --></h1>
+    <p class="tagline reveal d2"><!-- TAGLINE --></p>
+
+    <div class="videoframe reveal d2">
+      <video controls preload="metadata" playsinline <!-- VIDEO_POSTER -->>
+        <source src="<!-- VIDEO_SRC -->" type="video/mp4">
+        Your browser does not support embedded video — <a href="<!-- VIDEO_SRC -->">download the recording</a>.
+      </video>
+    </div>
+    <p class="videocap reveal d3"><!-- VIDEO_CAPTION --></p>
+  </section>
+
+  <article class="article">
+    <!-- CONTENT -->
+  </article>
+
+  <nav class="pager wrap">
+    <!-- PAGER -->
+  </nav>
+</main>
+
+<footer class="foot-site">
+  <div class="wrap">
+    <p class="note">Part of the <a href="index.html" style="color:var(--text-2);border-bottom:1px solid var(--line-bright)">Aerospace Events Agents Digital Thread</a> demo gallery — an internal AWS demonstration.</p>
+    <div class="tags">
+      <span>AWS sample demo gallery</span>
+      <span>eu-west-1</span>
+      <span>AgentCore · A2A</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+  NCR-1780057497-210              subtype=NonConformance   part=55192-001     serial=SN-0047
+  NCR-DRAMA-1780058868063-1       subtype=NonConformance   part=44821-003     serial=SN-0047
+  NCR-1780058614-272              subtype=NonConformance   part=44821-003     serial=SN-0047
+  NCR-1780058976-451              subtype=NonConformance   part=44821-007     serial=SN-0047
+  NCR-DRAMA-1780058868069-2       subtype=NonConformance   part=44821-003     serial=SN-0047

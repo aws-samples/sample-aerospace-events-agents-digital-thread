@@ -1,0 +1,26 @@
+# Digital Thread Navigator agent — served on AgentCore Runtime with the AGUI protocol.
+# Build context is src/agents/ (so tools/ and thread-navigator/ are both reachable).
+FROM --platform=linux/arm64 python:3.12-slim
+
+WORKDIR /app
+
+COPY thread-navigator/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# server.py inserts its parent (/app) on sys.path and imports tools.* ,
+# so tools/ must sit beside the thread-navigator/ package.
+COPY tools/ /app/tools/
+COPY thread-navigator/server.py /app/thread-navigator/server.py
+
+WORKDIR /app/thread-navigator
+EXPOSE 8080
+
+# Run as a non-root user (CKV_DOCKER_3).
+RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Liveness: the server is accepting TCP connections on its port (CKV_DOCKER_2).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD python -c "import socket; socket.create_connection(('127.0.0.1', 8080), 3).close()" || exit 1
+
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]

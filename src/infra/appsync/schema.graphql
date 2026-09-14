@@ -1,0 +1,349 @@
+type NonConformance {
+  ncrId: ID!
+  partNumber: String!
+  serialNumber: String
+  workOrderId: String
+  operationNumber: String
+  defectCode: String!
+  severity: Severity!
+  disposition: String
+  supplierId: String
+  supplierName: String
+  lotNumber: String
+  status: NcrStatus!
+  raisedBy: String
+  correlationId: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum Severity {
+  MINOR
+  MAJOR
+  CRITICAL
+}
+
+enum NcrStatus {
+  OPEN
+  DISPOSITIONED
+  CLOSED
+}
+
+input CreateNonConformanceInput {
+  partNumber: String!
+  serialNumber: String
+  workOrderId: String
+  operationNumber: String
+  defectCode: String!
+  severity: Severity!
+  supplierId: String
+  supplierName: String
+  lotNumber: String
+  status: NcrStatus
+}
+
+type NonConformanceConnection {
+  items: [NonConformance!]!
+  nextToken: String
+}
+
+# MES Work Order
+type WorkOrder @aws_cognito_user_pools {
+  workOrderId: ID!
+  partNumber: String
+  serialNumber: String
+  status: String!
+  cell: String
+  assignedOperator: String
+  operationNumber: String
+  operationName: String
+  holdReason: String
+  cycleTimeMs: Int
+  scheduledStart: String
+  actualEnd: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+input CreateWorkOrderInput {
+  partNumber: String
+  serialNumber: String
+  status: String!
+  cell: String
+  assignedOperator: String
+  operationNumber: String
+  operationName: String
+}
+
+type WorkOrderConnection @aws_cognito_user_pools {
+  items: [WorkOrder!]!
+  nextToken: String
+}
+
+# Generic source system record (PLM, ERP, SRM, WMS, DHR, Program, InService)
+type SourceRecord @aws_cognito_user_pools {
+  PK: String!
+  SK: String!
+  status: String
+  createdAt: String
+  updatedAt: String
+  # All domain-specific fields stored as flat attributes — accessed via AWSJSON
+  partNumber: String
+  description: String
+  revision: String
+  drawingNumber: String
+  ecoId: String
+  poNumber: String
+  receiptId: String
+  supplierId: String
+  supplierName: String
+  quantity: Int
+  lotNumber: String
+  kitId: String
+  workOrderId: String
+  requiredQty: Int
+  stagedQty: Int
+  locationId: String
+  serialNumber: String
+  operationNumber: String
+  certType: String
+  testType: String
+  result: String
+  programId: String
+  milestoneId: String
+  milestoneName: String
+  confidence: Int
+  spi: Float
+  cpi: Float
+  parameter: String
+  actualValue: Float
+  deviation: Float
+  unit: String
+  flightHours: Int
+  qualificationStatus: String
+  otdPercent: String
+  qualityScore: String
+  overallScore: String
+  period: String
+  # ERP procurement (enriched) + PLM change-workflow / drawing fields
+  requisitionId: String
+  invoiceId: String
+  ecrId: String
+  ecnId: String
+  bomId: String
+  costCenter: String
+  purchasingGroup: String
+  materialGroup: String
+  currency: String
+  incoterms: String
+  plantId: String
+  storageLocation: String
+  taxCode: String
+  movementType: String
+  matchType: String
+  blockReason: String
+  maturityState: String
+  lifecycleState: String
+  effectivity: String
+  reason: String
+  revisionLetter: String
+  drawingUri: String
+  drawingS3Key: String
+  drawingS3Bucket: String
+}
+
+input CreateSourceRecordInput {
+  PK: String!
+  SK: String
+  status: String
+  partNumber: String
+  description: String
+  revision: String
+  supplierId: String
+  supplierName: String
+  quantity: Int
+  lotNumber: String
+  workOrderId: String
+  serialNumber: String
+  programId: String
+}
+
+type SourceRecordConnection @aws_cognito_user_pools {
+  items: [SourceRecord!]!
+  nextToken: String
+}
+
+# Dashboard event — generic event pushed from EventBridge via publisher Lambda
+type DashboardEvent @aws_iam @aws_cognito_user_pools {
+  eventId: ID!
+  eventType: String!
+  domain: String!
+  entityId: String!
+  occurredAt: String!
+  channel: String!
+  payload: AWSJSON!
+}
+
+input PublishDashboardEventInput {
+  eventId: ID!
+  eventType: String!
+  domain: String!
+  entityId: String!
+  occurredAt: String!
+  channel: String!
+  payload: AWSJSON!
+}
+
+# Agent Finding — persisted to DDB, subscribed in real-time
+type AgentFinding @aws_iam @aws_cognito_user_pools {
+  findingId: ID!
+  agentName: String!
+  domain: String!
+  entityId: String!
+  summary: String!
+  action: String!
+  evidence: String
+  sessionId: String
+  correlationId: String
+  sourceEventId: String
+  createdAt: String!
+}
+
+input CreateAgentFindingInput {
+  findingId: ID!
+  agentName: String!
+  domain: String!
+  entityId: String!
+  summary: String!
+  action: String!
+  evidence: String
+  sessionId: String
+  correlationId: String
+  sourceEventId: String
+  createdAt: String!
+}
+
+type AgentFindingConnection @aws_iam @aws_cognito_user_pools {
+  items: [AgentFinding!]!
+  nextToken: String
+}
+
+# HITL Question — persisted to DDB, subscribed in real-time
+type HITLQuestion @aws_iam @aws_cognito_user_pools {
+  taskId: ID!
+  sessionId: String!
+  agentName: String!
+  domainId: String!
+  question: String!
+  options: [String!]!
+  evidence: String
+  priority: String!
+  status: String!
+  answer: String
+  correlationId: String
+  sourceEventId: String
+  createdAt: Int!
+  answeredAt: Int
+}
+
+input CreateHITLQuestionInput {
+  taskId: ID!
+  sessionId: String!
+  agentName: String!
+  domainId: String!
+  question: String!
+  options: [String!]!
+  evidence: String
+  priority: String!
+  status: String!
+  correlationId: String
+  sourceEventId: String
+  createdAt: Int!
+}
+
+input AnswerHITLQuestionInput {
+  taskId: ID!
+  answer: String!
+  status: String!
+  answeredAt: Int!
+}
+
+type HITLQuestionConnection @aws_iam @aws_cognito_user_pools {
+  items: [HITLQuestion!]!
+  nextToken: String
+}
+
+type Query {
+  getNonConformance(ncrId: ID!): NonConformance
+  listNonConformances(limit: Int, nextToken: String): NonConformanceConnection!
+  listWorkOrders(limit: Int, nextToken: String): WorkOrderConnection!
+  listPlmRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listErpRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listSrmRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listWmsRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listDhrRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listProgramRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listInserviceRecords(limit: Int, nextToken: String): SourceRecordConnection!
+  listAgentFindings(domain: String, limit: Int, nextToken: String): AgentFindingConnection!
+    @aws_iam @aws_cognito_user_pools
+  listHITLQuestions(status: String, domainId: String, limit: Int, nextToken: String): HITLQuestionConnection!
+    @aws_iam @aws_cognito_user_pools
+}
+
+type Mutation {
+  createNonConformance(input: CreateNonConformanceInput!): NonConformance!
+  createWorkOrder(input: CreateWorkOrderInput!): WorkOrder!
+  createPlmRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createErpRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createSrmRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createWmsRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createDhrRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createProgramRecord(input: CreateSourceRecordInput!): SourceRecord!
+  createInserviceRecord(input: CreateSourceRecordInput!): SourceRecord!
+  publishDashboardEvent(input: PublishDashboardEventInput!): DashboardEvent!
+    @aws_iam
+  createAgentFinding(input: CreateAgentFindingInput!): AgentFinding!
+    @aws_iam
+  createHITLQuestion(input: CreateHITLQuestionInput!): HITLQuestion!
+    @aws_iam
+  answerHITLQuestion(input: AnswerHITLQuestionInput!): HITLQuestion!
+    @aws_iam @aws_cognito_user_pools
+}
+
+type Subscription {
+  onCreateNonConformance: NonConformance
+    @aws_subscribe(mutations: ["createNonConformance"])
+  onCreateWorkOrder: WorkOrder
+    @aws_subscribe(mutations: ["createWorkOrder"])
+  onCreatePlmRecord: SourceRecord
+    @aws_subscribe(mutations: ["createPlmRecord"])
+  onCreateErpRecord: SourceRecord
+    @aws_subscribe(mutations: ["createErpRecord"])
+  onCreateSrmRecord: SourceRecord
+    @aws_subscribe(mutations: ["createSrmRecord"])
+  onCreateWmsRecord: SourceRecord
+    @aws_subscribe(mutations: ["createWmsRecord"])
+  onCreateDhrRecord: SourceRecord
+    @aws_subscribe(mutations: ["createDhrRecord"])
+  onCreateProgramRecord: SourceRecord
+    @aws_subscribe(mutations: ["createProgramRecord"])
+  onCreateInserviceRecord: SourceRecord
+    @aws_subscribe(mutations: ["createInserviceRecord"])
+  onDashboardEvent(channel: String): DashboardEvent
+    @aws_subscribe(mutations: ["publishDashboardEvent"])
+  onCreateAgentFinding(domain: String): AgentFinding
+    @aws_subscribe(mutations: ["createAgentFinding"])
+    @aws_iam @aws_cognito_user_pools
+  onCreateHITLQuestion: HITLQuestion
+    @aws_subscribe(mutations: ["createHITLQuestion"])
+    @aws_iam @aws_cognito_user_pools
+  onAnswerHITLQuestion: HITLQuestion
+    @aws_subscribe(mutations: ["answerHITLQuestion"])
+    @aws_iam @aws_cognito_user_pools
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

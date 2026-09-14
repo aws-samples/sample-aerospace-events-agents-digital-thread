@@ -1,0 +1,7 @@
+fastapi>=0.115.0
+uvicorn>=0.32.0
+strands-agents>=0.1.0
+strands-agents-tools>=0.1.0
+boto3>=1.43.0
+requests>=2.31.0
+ag-ui-strands>=0.3.0

@@ -1,0 +1,34 @@
+{
+  "$comment": "ISA-95:2018 ProcessSegments — recipe steps per MaterialDefinition. ID format SEG-{partNumber}-{opNumber}. Generic 5-step recipe applied to each part for demo simplicity.",
+  "segments": [
+    { "partNumber": "44821-003", "opNumber": "Op-40", "name": "Rough Machine",  "ordering": 1 },
+    { "partNumber": "44821-003", "opNumber": "Op-50", "name": "Finish Machine", "ordering": 2 },
+    { "partNumber": "44821-003", "opNumber": "Op-60", "name": "Deburr",         "ordering": 3 },
+    { "partNumber": "44821-003", "opNumber": "Op-70", "name": "Inspect",        "ordering": 4 },
+    { "partNumber": "44821-003", "opNumber": "Op-80", "name": "Surface Treat",  "ordering": 5 },
+
+    { "partNumber": "44821-007", "opNumber": "Op-40", "name": "Rough Machine",  "ordering": 1 },
+    { "partNumber": "44821-007", "opNumber": "Op-50", "name": "Finish Machine", "ordering": 2 },
+    { "partNumber": "44821-007", "opNumber": "Op-60", "name": "Deburr",         "ordering": 3 },
+    { "partNumber": "44821-007", "opNumber": "Op-70", "name": "Inspect",        "ordering": 4 },
+    { "partNumber": "44821-007", "opNumber": "Op-80", "name": "Surface Treat",  "ordering": 5 },
+
+    { "partNumber": "44821-012", "opNumber": "Op-40", "name": "Rough Machine",  "ordering": 1 },
+    { "partNumber": "44821-012", "opNumber": "Op-50", "name": "Finish Machine", "ordering": 2 },
+    { "partNumber": "44821-012", "opNumber": "Op-60", "name": "Deburr",         "ordering": 3 },
+    { "partNumber": "44821-012", "opNumber": "Op-70", "name": "Inspect",        "ordering": 4 },
+    { "partNumber": "44821-012", "opNumber": "Op-80", "name": "Surface Treat",  "ordering": 5 },
+
+    { "partNumber": "55192-001", "opNumber": "Op-40", "name": "Rough Machine",  "ordering": 1 },
+    { "partNumber": "55192-001", "opNumber": "Op-50", "name": "Finish Machine", "ordering": 2 },
+    { "partNumber": "55192-001", "opNumber": "Op-60", "name": "Deburr",         "ordering": 3 },
+    { "partNumber": "55192-001", "opNumber": "Op-70", "name": "Inspect",        "ordering": 4 },
+    { "partNumber": "55192-001", "opNumber": "Op-80", "name": "Surface Treat",  "ordering": 5 },
+
+    { "partNumber": "55192-004", "opNumber": "Op-40", "name": "Rough Machine",  "ordering": 1 },
+    { "partNumber": "55192-004", "opNumber": "Op-50", "name": "Finish Machine", "ordering": 2 },
+    { "partNumber": "55192-004", "opNumber": "Op-60", "name": "Deburr",         "ordering": 3 },
+    { "partNumber": "55192-004", "opNumber": "Op-70", "name": "Inspect",        "ordering": 4 },
+    { "partNumber": "55192-004", "opNumber": "Op-80", "name": "Surface Treat",  "ordering": 5 }
+  ]
+}

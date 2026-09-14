@@ -1,0 +1,243 @@
+# ARES-1 Lifecycle Scenario — SN-0047 Wing Box Sub-Assembly
+# From design release to in-service operation in ~10 minutes
+
+scenario:
+  name: ares1-lifecycle
+  serial_number: SN-0047
+  program: ARES-1
+  description: >
+    Complete lifecycle of a wing box sub-assembly: design release, procurement,
+    manufacturing through 5 operations, quality testing, certification, and
+    in-service fleet monitoring. Three drama moments demonstrate agent cascades.
+
+# ──────────────────────────────────────────────────────────────────────
+# SEED PHASE — Historical context (T-90 days to T-0)
+# All events: phase=seed, t_sec=0, lastModifiedBy=seed-baseline
+# ──────────────────────────────────────────────────────────────────────
+
+seed:
+  plm:
+    description: "All 5 parts released at Rev A and B, drawings linked, 5 ECOs"
+    events:
+      # 5 parts x 2 revisions = 10 part releases
+      - type: part_release
+        parts: all
+        revisions: [A, B]
+      # 5 drawings (one per part)
+      - type: drawing_release
+        parts: all
+      # 5 ECOs spread over 90 days
+      - type: eco
+        count: 5
+        parts: [44821-003, 44821-007, 44821-012, 55192-001, 55192-004]
+
+  erp:
+    description: "POs to all 3 suppliers, material receipts with lots"
+    events:
+      # 3 suppliers x 5 parts = 15 POs
+      - type: purchase_order
+        count: 15
+        spread_days: 90
+      # 30 receipts (2 per PO on average, with lots)
+      - type: material_receipt
+        count: 30
+        on_time_ratio: 0.85
+        spread_days: 90
+
+  srm:
+    description: "Monthly supplier scorecards — 6 months x 3 suppliers"
+    events:
+      - type: supplier_score
+        suppliers: all
+        periods: [2025-10, 2025-11, 2025-12, 2026-01, 2026-02, 2026-03]
+        qualification: QUALIFIED  # all smooth in seed
+
+  mes:
+    description: "20 completed WOs for earlier operations on SN-0047"
+    events:
+      # 4 WOs per operation (Op-40 through Op-80 on other parts)
+      - type: work_order
+        count: 20
+        status: COMPLETED
+        operations: [Op-40, Op-50, Op-60, Op-70, Op-80]
+        spread_days: 60
+
+  wms:
+    description: "Kits staged for all completed WOs"
+    events:
+      - type: kit_staged
+        count: 20
+        all_staged: true  # no shortages in seed
+
+  dhr:
+    description: "Sign-offs, certs, and test records for completed work"
+    events:
+      # 20 operation sign-offs (one per completed WO)
+      - type: op_signoff
+        count: 20
+      # 12 cert links (mix of types)
+      - type: cert_link
+        count: 12
+        cert_types: [MATERIAL_CERT, PROCESS_CERT, NDT_CERT, HEAT_TREAT_CERT]
+      # 15 test records (all PASS in seed)
+      - type: test_record
+        count: 15
+        result: PASS
+        test_types: [DIMENSIONAL, NDT_UT, NDT_FPI, HARDNESS, SURFACE_ROUGHNESS]
+
+  program:
+    description: "Milestones CDR and PDR completed, 6 monthly EV updates"
+    events:
+      - type: milestone
+        milestones:
+          - {id: CDR, confidence: 100, status: ON_TRACK}
+          - {id: PDR, confidence: 100, status: ON_TRACK}
+          - {id: FAI-Complete, confidence: 78, status: ON_TRACK}
+      - type: ev_metrics
+        count: 6
+        spi_range: [0.98, 1.05]
+        cpi_range: [0.97, 1.03]
+
+  inservice:
+    description: "Baseline fleet readings (SN-0047 not yet in service)"
+    events: []  # SN-0047 enters service during live phase
+
+# ──────────────────────────────────────────────────────────────────────
+# LIVE PHASE — Real-time replay (T+0 to T+600 seconds = 10 minutes)
+# Events trigger the full pipeline: DDB -> MSK -> EventBridge -> Agents
+# ──────────────────────────────────────────────────────────────────────
+
+live:
+  # ── MINUTE 0: Manufacturing Start ──────────────────────────────────
+  - t_range: [0, 59]
+    label: "Manufacturing Start"
+    events:
+      - {t_sec: 0, domain: mes, type: work_order_started, wo: WO-90001, part: 44821-003, op: Op-40, cell: cell-3, operator: op-garcia}
+      - {t_sec: 10, domain: wms, type: kit_staged, kit: KIT-90001, wo: WO-90001, part: 44821-003, lot: LOT-7731}
+      - {t_sec: 20, domain: erp, type: material_receipt, rcpt: RCPT-90001, supplier: titan-forge, part: 44821-003, lot: LOT-7731, on_time: true}
+      - {t_sec: 30, domain: srm, type: supplier_score, supplier: titan-forge, otd: 91.5, quality: 94.2, status: QUALIFIED}
+      - {t_sec: 40, domain: erp, type: purchase_order, po: PO-90016, supplier: apex-aero, part: 55192-001}
+      - {t_sec: 50, domain: plm, type: part_release, part: 44821-003, rev: C}
+
+  # ── MINUTE 1: Op-40 Completes ─────────────────────────────────────
+  - t_range: [60, 119]
+    label: "Op-40 Completes"
+    events:
+      - {t_sec: 60, domain: mes, type: op_complete, wo: WO-90001, op: Op-40, cycle_ms: 320000}
+      - {t_sec: 70, domain: dhr, type: op_signoff, op: Op-40, operator: op-garcia}
+      - {t_sec: 75, domain: dhr, type: cert_link, cert_type: MATERIAL_CERT, cert: CERT-90001}
+      - {t_sec: 80, domain: dhr, type: test_record, test: TEST-90001, test_type: DIMENSIONAL, result: PASS}
+      - {t_sec: 90, domain: mes, type: work_order_started, wo: WO-90002, part: 44821-003, op: Op-50, cell: cell-3, operator: op-mueller}
+      - {t_sec: 100, domain: wms, type: kit_staged, kit: KIT-90002, wo: WO-90002, part: 44821-003, lot: LOT-7731}
+      - {t_sec: 110, domain: erp, type: material_receipt, rcpt: RCPT-90002, supplier: apex-aero, part: 55192-001, lot: LOT-7840, on_time: true}
+
+  # ── MINUTE 2: Op-50 In Progress ───────────────────────────────────
+  - t_range: [120, 179]
+    label: "Op-50 In Progress"
+    events:
+      - {t_sec: 120, domain: dhr, type: test_record, test: TEST-90002, test_type: NDT_UT, result: PASS}
+      - {t_sec: 130, domain: dhr, type: cert_link, cert_type: PROCESS_CERT, cert: CERT-90002}
+      - {t_sec: 140, domain: program, type: ev_metrics, spi: 1.02, cpi: 1.01}
+      - {t_sec: 150, domain: mes, type: op_complete, wo: WO-90002, op: Op-50, cycle_ms: 450000}
+      - {t_sec: 160, domain: dhr, type: op_signoff, op: Op-50, operator: op-mueller}
+      - {t_sec: 170, domain: srm, type: supplier_score, supplier: nordic-precision, otd: 95.0, quality: 96.1, status: QUALIFIED}
+
+  # ── MINUTE 3: DRAMA 1 — NCR on Op-50 ──────────────────────────────
+  - t_range: [180, 209]
+    label: "DRAMA: NCR on Op-50"
+    drama: true
+    events:
+      - t_sec: 180
+        domain: qms
+        type: ncr_raised
+        drama: true
+        ncr: NCR-90001
+        part: 44821-003
+        op: Op-50
+        defect: BORE_DIAMETER_OOT
+        severity: MAJOR
+        supplier: titan-forge
+        lot: LOT-7731
+        note: "Bore 0.003in oversize on flight-critical fitting — triggers agent1→agent4→agent3 cascade"
+
+  # ── MINUTES 3.5-5: Recovery + Op-60 ───────────────────────────────
+  - t_range: [210, 299]
+    label: "Recovery + Op-60"
+    events:
+      - {t_sec: 215, domain: dhr, type: test_record, test: TEST-90003, test_type: NDT_FPI, result: PASS}
+      - {t_sec: 230, domain: dhr, type: cert_link, cert_type: NDT_CERT, cert: CERT-90003}
+      - {t_sec: 240, domain: mes, type: work_order_started, wo: WO-90003, part: 44821-003, op: Op-60, cell: cell-4, operator: op-tanaka}
+      - {t_sec: 250, domain: wms, type: kit_staged, kit: KIT-90003, wo: WO-90003, part: 44821-003, lot: LOT-7732}
+      - {t_sec: 270, domain: mes, type: op_complete, wo: WO-90003, op: Op-60, cycle_ms: 180000}
+      - {t_sec: 280, domain: dhr, type: op_signoff, op: Op-60, operator: op-tanaka}
+      - {t_sec: 290, domain: erp, type: material_receipt, rcpt: RCPT-90003, supplier: nordic-precision, part: 44821-012, lot: LOT-8002, on_time: true}
+
+  # ── MINUTES 5-6: Op-70 Inspect ────────────────────────────────────
+  - t_range: [300, 359]
+    label: "Op-70 Inspect"
+    events:
+      - {t_sec: 300, domain: mes, type: work_order_started, wo: WO-90004, part: 44821-003, op: Op-70, cell: cell-4, operator: op-singh}
+      - {t_sec: 310, domain: dhr, type: test_record, test: TEST-90004, test_type: HARDNESS, result: PASS}
+      - {t_sec: 320, domain: dhr, type: test_record, test: TEST-90005, test_type: SURFACE_ROUGHNESS, result: PASS}
+      - {t_sec: 330, domain: mes, type: op_complete, wo: WO-90004, op: Op-70, cycle_ms: 240000}
+      - {t_sec: 340, domain: dhr, type: op_signoff, op: Op-70, operator: op-singh}
+      - {t_sec: 350, domain: erp, type: material_receipt, rcpt: RCPT-90004, supplier: apex-aero, part: 44821-007, lot: LOT-7901, on_time: true}
+
+  # ── MINUTE 6: DRAMA 2 — Supplier Degradation ──────────────────────
+  - t_range: [360, 389]
+    label: "DRAMA: Supplier OTD Drop"
+    drama: true
+    events:
+      - t_sec: 360
+        domain: srm
+        type: supplier_score
+        drama: true
+        supplier: titan-forge
+        otd: 62.0
+        quality: 71.5
+        status: CONDITIONAL
+        note: "Titan Forge OTD crashes to 62% — triggers agent4 escalation"
+
+  # ── MINUTES 6.5-8: Surface Treat + Certs ──────────────────────────
+  - t_range: [390, 479]
+    label: "Surface Treat + Certs"
+    events:
+      - {t_sec: 390, domain: mes, type: work_order_started, wo: WO-90005, part: 44821-003, op: Op-80, cell: cell-5, operator: op-johansson}
+      - {t_sec: 400, domain: dhr, type: cert_link, cert_type: HEAT_TREAT_CERT, cert: CERT-90004}
+      - {t_sec: 410, domain: mes, type: op_complete, wo: WO-90005, op: Op-80, cycle_ms: 600000}
+      - {t_sec: 420, domain: dhr, type: op_signoff, op: Op-80, operator: op-johansson}
+      - {t_sec: 430, domain: dhr, type: cert_link, cert_type: NDT_CERT, cert: CERT-90005}
+      - {t_sec: 440, domain: dhr, type: test_record, test: TEST-90006, test_type: NDT_FPI, result: PASS}
+      - {t_sec: 450, domain: program, type: milestone, milestone: FAI-Complete, confidence: 92, status: ON_TRACK}
+      - {t_sec: 460, domain: srm, type: supplier_score, supplier: nordic-precision, otd: 95.5, quality: 97.0, status: QUALIFIED}
+      - {t_sec: 470, domain: srm, type: supplier_score, supplier: apex-aero, otd: 88.0, quality: 91.5, status: QUALIFIED}
+
+  # ── MINUTE 8: DRAMA 3 — Fleet Anomaly ─────────────────────────────
+  - t_range: [480, 509]
+    label: "DRAMA: Fleet Anomaly"
+    drama: true
+    events:
+      - t_sec: 480
+        domain: inservice
+        type: dt_anomaly
+        drama: true
+        parameter: hydraulic_pressure_psi
+        value: 3450.0
+        deviation: 15.0
+        status: ANOMALY
+        note: "SN-0047 hydraulic pressure 15% above normal — triggers agent9 escalation"
+
+  # ── MINUTES 8.5-10: In-Service + Closeout ──────────────────────────
+  - t_range: [510, 600]
+    label: "In-Service + Closeout"
+    events:
+      - {t_sec: 510, domain: inservice, type: dt_reading, parameter: engine_vibration_ips, value: 0.45, status: NORMAL}
+      - {t_sec: 520, domain: inservice, type: dt_reading, parameter: fuel_flow_pph, value: 1050.0, status: NORMAL}
+      - {t_sec: 530, domain: inservice, type: dt_reading, parameter: cabin_pressure_diff_psi, value: 8.5, status: NORMAL}
+      - {t_sec: 540, domain: program, type: milestone, milestone: Type-Cert, confidence: 88, status: ON_TRACK}
+      - {t_sec: 550, domain: program, type: ev_metrics, spi: 1.01, cpi: 0.99}
+      - {t_sec: 560, domain: plm, type: eco, eco: ECO-90006, part: 44821-003, desc: "Tighten bore tolerance per NCR-90001 findings"}
+      - {t_sec: 570, domain: inservice, type: dt_reading, parameter: hydraulic_pressure_psi, value: 3020.0, status: NORMAL}
+      - {t_sec: 580, domain: dhr, type: test_record, test: TEST-90007, test_type: DIMENSIONAL, result: PASS}
+      - {t_sec: 590, domain: program, type: milestone, milestone: First-Flight, confidence: 85, status: ON_TRACK}
+      - {t_sec: 600, domain: inservice, type: dt_reading, parameter: engine_vibration_ips, value: 0.42, status: NORMAL}
